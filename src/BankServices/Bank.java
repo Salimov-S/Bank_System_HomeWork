@@ -4,6 +4,7 @@ package BankServices;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -27,22 +28,19 @@ public class Bank {
 		return accounts.size();
 	}
 	
-	public Account deleteAccount(int code, int date) throws InvalidCode {
+	public Account deleteAccount(int code, int date) throws InvalidCode, InvalidValue {
 		Account account = getAccount(code);
-		account.withdraw(date, account.getBalance());
-		accounts.remove(account);
-		deletedAccounts.add(account);
+		try {
+			account.withdraw(date, account.getBalance());
+		} catch (InvalidValue e) {
+			e.printStackTrace();
+		}
 		return account;
 	}
 	
 	public Account getAccount(int code) throws InvalidCode {
-		try {
-			Account account = accounts.get(code - 1);
-			return account;
-		}catch (Exception e) {
-			throw new InvalidCode();
-		}
-
+		if (code < 1 || code > accounts.size()) new InvalidCode();
+		return accounts.get(code - 1);
 	}
 
 	public void deposit(int code, int date, double value) throws InvalidCode {
@@ -52,7 +50,6 @@ public class Bank {
 
 	public void withdraw(int code, int date, double value) throws InvalidCode, InvalidValue {
 		Account account = getAccount(code);
-		if (value > account.getBalance()) throw new InvalidValue();
 		account.withdraw(date, value);
 	}
 	
@@ -71,7 +68,7 @@ public class Bank {
 	}
 	
 	public List<Account> getAccounts() {
-		sortByCodeAsc(accounts);
+		Collections.sort(accounts, new ByCodeAccountComparator());
 		return accounts;
 	}
 	
@@ -89,7 +86,7 @@ public class Bank {
 				accountsByBalance.add(account);
 			}
 		}
-		sortByBalanceDesc(accountsByBalance);
+		Collections.sort(accountsByBalance, new ByBalanceAccountComparatorReversed());
 		return accountsByBalance;
 	}
 	
@@ -104,39 +101,4 @@ public class Bank {
 		return count;
 	}
 
-
-	private static void sortByCodeAsc(List<Account> accounts) {
-
-		for (int i = 0; i < accounts.size() - 1; i++) {
-			int currentMinIndex = i;
-			for (int j = i+1; j < accounts.size(); j++) {
-				Account account1 = accounts.get(j);
-				Account account2 = accounts.get(currentMinIndex);
-				if (account1.getCode() < account2.getCode()) {
-					currentMinIndex = j;
-				}
-			}
-			if (i != currentMinIndex) {
-				Account temp = accounts.get(i);
-				accounts.set(i, accounts.get(currentMinIndex));
-				accounts.set(currentMinIndex, temp);
-			}
-		}
-	}
-
-	private void sortByBalanceDesc(List<Account> accounts) {
-		for (int i = 0; i < accounts.size() - 1; i++) {
-			int currentMinIndex = i;
-			for (int j = i+1; j < accounts.size(); j++) {
-				if (accounts.get(j).getBalance() > accounts.get(currentMinIndex).getBalance()) {
-					currentMinIndex = j;
-				}
-			}
-			if (i != currentMinIndex) {
-				Account temp = accounts.get(i);
-				accounts.set(i, accounts.get(currentMinIndex));
-				accounts.set(currentMinIndex, temp);
-			}
-		}
-	}
 }
