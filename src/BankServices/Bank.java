@@ -3,10 +3,7 @@ package BankServices;
 
 
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Bank {
 	private String name;
@@ -100,5 +97,20 @@ public class Bank {
 		}
 		return count;
 	}
+
+	public class ByCodeAccountComparator implements Comparator<Account> {
+		@Override
+		public int compare(Account o1, Account o2) {
+			return o1.getCode() - o2.getCode();
+		}
+	}
+
+	public class ByBalanceAccountComparatorReversed implements Comparator<Account> {
+		@Override
+		public int compare(Account o1, Account o2) {
+			return (int) (o2.getBalance() - o1.getBalance());
+		}
+	}
+
 
 }

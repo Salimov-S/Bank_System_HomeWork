@@ -2,6 +2,7 @@ package BankServices;
 
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -82,4 +83,27 @@ public class Account {
         return code + "," + ownerName + "," + date + "," + balance;
     }
 
+    public class ByDateDescDepositComparator implements Comparator<Deposit> {
+
+        @Override
+        public int compare(Deposit o1, Deposit o2) {
+            return o1.getDate() - o2.getDate();
+        }
+    }
+
+    public class ByDateDescWithdrawalComparator implements Comparator<Withdrawal> {
+
+        @Override
+        public int compare(Withdrawal o1, Withdrawal o2) {
+            return o1.getDate() - o2.getDate();
+        }
+    }
+
+    public class ByDateOperationComparatorReversed implements Comparator<Operation> {
+
+        @Override
+        public int compare(Operation o1, Operation o2) {
+            return o2.getDate() - o1.getDate();
+        }
+    }
 }
